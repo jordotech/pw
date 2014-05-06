@@ -1,0 +1,4 @@
+name = PW
+description = Custom module for PW
+core = 7.x
+package = PW

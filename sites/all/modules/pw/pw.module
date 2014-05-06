@@ -1,0 +1,24 @@
+<?php
+
+function pw_init(){
+/*
+	if(arg(1) == 200){
+		$cids = array();
+		$query = db_select('comment', 'c');
+
+		$query->fields('c', array('cid'))
+			->range(0, 6000);
+		$result = $query->execute();
+		$cids = array();
+		foreach ($result as $key => $value) {
+			$cids[] = $value->cid;
+		}
+		debug(current($cids));
+
+		//		comment_delete_multiple($cids);	
+		foreach($cids as $cid){
+			comment_delete($cid);
+		}
+	}
+*/
+}

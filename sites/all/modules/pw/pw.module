@@ -1,24 +1,67 @@
 <?php
 
 function pw_init(){
-/*
-	if(arg(1) == 200){
-		$cids = array();
-		$query = db_select('comment', 'c');
 
-		$query->fields('c', array('cid'))
-			->range(0, 6000);
-		$result = $query->execute();
-		$cids = array();
-		foreach ($result as $key => $value) {
-			$cids[] = $value->cid;
-		}
-		debug(current($cids));
+}
 
-		//		comment_delete_multiple($cids);	
-		foreach($cids as $cid){
-			comment_delete($cid);
-		}
-	}
-*/
+function pw_menu(){
+    $items['grid'] = array(
+        'title' => 'Grid',
+        'description' => 'The Grid',
+        'page callback' => 'pw_grid',
+        'access callback' => TRUE,
+    );
+    return $items;
+}
+
+function pw_grid(){
+    $output = '';
+    $items = pw_grid_items(500);
+
+    foreach($items as $key=>$value){
+        $img_path = extract_img_path($value['body']);
+        $grid = '<a href="/node/' . $value['nid'] .'"><div class="grid-item">';
+
+        $grid .= theme('image_style', array('style_name' => 'test', 'path' => $img_path, 'alt' => 'image alt', 'title' => 'title',));
+        $grid .= '</div></a>';
+        $output .= $grid;
+    }
+    return $output;
+}
+function extract_img_path($body){
+    $src_pos = strpos($body, 'src');
+    $a = substr($body, $src_pos);
+    $b = strpos($a, '"')+2;
+
+    $c = substr($body, ($src_pos + $b));
+    $z = strpos($c, 'images');
+    $c = substr($c, $z);
+    $d = strpos($c, '"');
+    $img_path = substr($c, 0, $d);
+    return $img_path;
+
+}
+function pw_grid_items($limit, $tids = array()) {
+    $nids = array();
+    $query = db_select('node', 'n');
+    $query->leftJoin('field_data_body;', 'fdb', 'n.nid = fdb.entity_id');
+    if (count($tids) > 0) {
+        //$query->leftJoin('field_data_field_category', 'fdfc', 'n.nid = fdfc.entity_id');
+        //$query->condition('fdfc.field_category_tid', $tids, 'IN');
+    }
+
+    $query->condition('n.type', 'blog')
+        ->orderBy('created', 'DESC')
+        ->fields('n', array('nid', 'title'))
+        ->fields('fdb', array('body_value'))
+        ->range(0, $limit);
+    $result = $query->execute();
+    foreach ($result as $key => $value) {
+       $nids[] = array(
+            'nid' => $value->nid,
+            'title' => $value->title,
+            'body' => $value->body_value,
+        );
+    }
+    return $nids;
 }

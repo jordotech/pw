@@ -1,9 +1,7 @@
 var $ = jQuery.noConflict();
 
 $(document).ready(function () {
-    if($(window).width < 500){
-        $('.grid-item').slice(300).remove();
-    }
+
     $('.close-button').click(function () {
         $(this).hide();
         $('.grid-item').removeClass('dark');
@@ -44,6 +42,10 @@ $(document).ready(function () {
 });
 
 function itemDetail(nid) {
+    if($(window).width < 500){
+        window.location = '/grid-body/' + nid;
+    }
+    return false;
     var item = $('.grid-item[nid="' + nid + '"]');
     if(!$(item).hasClass('dark')){
         $('.close-button').show();

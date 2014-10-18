@@ -27,9 +27,15 @@ $(document).ready(function () {
         $('.grid-item').show();
         if($(this).attr('tid') != 'all'){
             $('.grid-item').not('[tid="' + tid + '"]').hide();
-
         }
-
+    });
+    $('#controls .light-button').click(function(){
+        $(this).addClass('active').siblings().removeClass('active');
+        $('body').addClass('light');
+    });
+    $('#controls .dark-button').click(function(){
+        $(this).addClass('active').siblings().removeClass('active');
+        $('body').removeClass('light');
     });
 });
 

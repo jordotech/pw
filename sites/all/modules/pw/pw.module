@@ -6,7 +6,6 @@ function pw_init(){
 
 function pw_menu(){
     $items['grid'] = array(
-        //'title' => 'Grid',
         'description' => 'The Grid',
         'page callback' => 'pw_grid',
         'access callback' => TRUE,
@@ -34,6 +33,8 @@ function pw_grid(){
         $output .= $grid;
     }
     $controls .= grid_cat_list();
+    $controls .= '<div class="light-dark"><span class="light-button">LIGHT</span> | <span class="dark-button active">DARK</span></div>';
+
     $controls .= '</div>';
     $output .= $controls;
     return $output;

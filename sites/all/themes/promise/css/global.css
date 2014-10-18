@@ -75,11 +75,20 @@ body.light{
     right:10px;
     top:40px;
 }
+body.light #controls{
+    color:000;
+    background:#fff;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
 #controls ul li{
     cursor:pointer;
     list-style:none;
     padding-bottom:10px;
 }
-#controls ul li.active{
+#controls ul li.active, #controls .light-dark span.active{
     color:red;
+}
+#controls .light-dark span{
+    cursor:pointer;
 }

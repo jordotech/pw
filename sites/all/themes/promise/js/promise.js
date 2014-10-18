@@ -45,11 +45,21 @@ function itemDetail(nid) {
         $('.close-button').show();
         $(item).siblings('.grid-item').addClass('dark');
         var body = $(item).find('.grid-item-body').clone();
-        $(body).appendTo('#details .drop-in');
+        get_body(nid);
         $(item).find('.grid-item-img').hide();
     }
 }
 
+function get_body(nid){
+    var protocol = window.location.protocol;
+    var base_url = protocol + '//' + window.location.host;
+    $.ajax({
+        url: base_url + '/grid-body/' + nid,
+        success: function(data) {
+            $(data).appendTo('#details .drop-in');
+        }
+    });
+}
 pw = {
     'hello':'bye'
 }

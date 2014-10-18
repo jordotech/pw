@@ -10,7 +10,17 @@ function pw_menu(){
         'page callback' => 'pw_grid',
         'access callback' => TRUE,
     );
+    $items['grid-body/%'] = array(
+        'page callback' => 'blog_body',
+        'access callback' => TRUE,
+        'page arguments' => array(1),
+    );
     return $items;
+}
+function blog_body($nid){
+    $body = db_query("SELECT body_value from field_data_body where entity_id = $nid")->fetchField();
+    print $body;
+    return null;
 }
 
 function pw_grid(){
@@ -26,7 +36,7 @@ function pw_grid(){
         $items = pw_grid_items(700);
         foreach($items as $key=>$value){
             $item_cat_div = '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
-            $body = $value['body'];
+            $body = '';
             $grid = '<div onclick="itemDetail(' . $value['nid'] . ')" nid = "' . $value['nid'] . '" class="grid-item" tid="' . $value['tid'] . '">';
 
             $grid .= '<div class="grid-item-img">';
@@ -39,7 +49,7 @@ function pw_grid(){
             $grid .= '<div class="grid-img-overlay">' . $value['title'] . '<br/>' . $item_cat_div . '</div></div>';
             $grid .= '<div class="grid-item-body">';
             $grid .= $item_cat_div;
-            $grid .= $value['body'] . '</div>';
+            $grid .= '' . '</div>';
             $grid .= '</div>';
             $output .= $grid;
         }
@@ -51,8 +61,8 @@ function pw_grid(){
         cache_set('grid', $output, 'cache', 3600);
         return $output;
     }
-
 }
+
 
 function grid_cat_list(){
 
@@ -96,7 +106,7 @@ function extract_img_path($body){
 function pw_grid_items($limit, $tids = array()) {
     $nids = array();
     $query = db_select('node', 'n');
-    $query->leftJoin('field_data_body;', 'fdb', 'n.nid = fdb.entity_id');
+    $query->leftJoin('field_data_body', 'fdb', 'n.nid = fdb.entity_id');
 
     $query->leftJoin('field_data_field_category', 'fdfc', 'n.nid = fdfc.entity_id');
     $query->leftJoin('taxonomy_term_data', 'ttd', 'fdfc.field_category_tid = ttd.tid');
@@ -115,7 +125,7 @@ function pw_grid_items($limit, $tids = array()) {
             $nids[] = array(
                 'nid' => $value->nid,
                 'title' => $value->title,
-                'body' => $value->body_value,
+                //'body' => $value->body_value,
                 'tid' => $value->field_category_tid,
                 'category' => $value->name,
                 'img_path' => $img_path,

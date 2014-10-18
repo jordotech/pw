@@ -1,7 +1,11 @@
 body{
+    background:#000;
+    color:#fff;
+    font-family:Arial, Helvetica, "Nimbus Sans L", sans-serif;
+}
+body.light{
     background:#fff;
     color:#000;
-    font-family:Arial, Helvetica, "Nimbus Sans L", sans-serif;
 }
 .grid-item{
 
@@ -43,8 +47,39 @@ body{
     z-index:99999;
     width: 100%;
     position: fixed;
-    top: 0;
+    top: 40px;
 }
 #details .grid-item-body{
     display:block;
+}
+.grid-img-overlay{
+    background: #000;
+    color: white;
+    opacity: 0;
+    width: 100%;
+    z-index: 99999999;
+    position: absolute;
+    bottom: 0px;
+    text-align: center;
+}
+.grid-item-img{
+    overflow:hidden;
+    position:relative;
+}
+#controls{
+    padding-top:10px;
+    padding-left:10px;
+    background:#000;
+    opacity:.7;
+    position:fixed;
+    right:10px;
+    top:40px;
+}
+#controls ul li{
+    cursor:pointer;
+    list-style:none;
+    padding-bottom:10px;
+}
+#controls ul li.active{
+    color:red;
 }

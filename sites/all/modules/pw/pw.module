@@ -6,7 +6,7 @@ function pw_init(){
 
 function pw_menu(){
     $items['grid'] = array(
-        'title' => 'Grid',
+        //'title' => 'Grid',
         'description' => 'The Grid',
         'page callback' => 'pw_grid',
         'access callback' => TRUE,
@@ -16,23 +16,45 @@ function pw_menu(){
 
 function pw_grid(){
     $output = '';
+    $controls = '<div id="controls">';
     $output .= '';
-
-    $output .= '<div id="details"><div class="close-button"><i class="fa fa-eye-slash fa-4x"></i></div><div class="drop-in"></div></div>';
-    $items = pw_grid_items(20);
+    $output .= '<div id="details"><div class="close-button"><i class="fa fa-mail-forward fa-4x"></i></div><div class="drop-in"></div></div>';
+    $items = pw_grid_items(50);
     //debug($items);
     foreach($items as $key=>$value){
+        $item_cat_div = '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
         $body = $value['body'];
         $grid = '<div onclick="itemDetail(' . $value['nid'] . ')" nid = "' . $value['nid'] . '" class="grid-item" tid="' . $value['tid'] . '">';
 
-        $grid .= '<div class="grid-item-img">' . theme('image_style', array('style_name' => 'test', 'path' => $value['img_path'], 'alt' => 'image alt', 'title' => 'title',)) . '</div>';;
+        $grid .= '<div class="grid-item-img">' . theme('image_style', array('style_name' => 'test', 'path' => $value['img_path'], 'alt' => 'image alt', 'title' => 'title',)) . '<div class="grid-img-overlay">' . $value['title'] . '<br/>' . $item_cat_div . '</div></div>';
         $grid .= '<div class="grid-item-body">';
-        $grid .= '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
+        $grid .= $item_cat_div;
         $grid .= $value['body'] . '</div>';
         $grid .= '</div>';
         $output .= $grid;
     }
+    $controls .= grid_cat_list();
+    $controls .= '</div>';
+    $output .= $controls;
     return $output;
+}
+
+function grid_cat_list(){
+    $cat_list = '<ul>';
+    $query = db_select('field_data_field_category', 'fdfc')->distinct();
+    $query->leftJoin('taxonomy_term_data', 'ttd', 'ttd.tid =fdfc.field_category_tid');
+    $query->leftJoin('field_data_field_category_icon', 'fdfci', 'fdfci.entity_id = ttd.tid');
+    $query->fields('ttd', array('name'))
+          ->fields('fdfci', array('field_category_icon_value'))
+          ->fields('fdfc', array('field_category_tid'));
+    $result = $query->execute();
+    $cat_list .= '<li tid="all">ALL</li>';
+    foreach ($result as $key => $value) {
+        $cat_list .= '<li tid="' . $value->field_category_tid . '"><i class="fa ' . $value->field_category_icon_value . '"></i> ' . $value->name . '</li>';
+      // debug($value->field_category_tid);
+    }
+    $cat_list .= '</ul>';
+    return $cat_list;
 }
 
 function extract_img_path($body){

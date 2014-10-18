@@ -59,5 +59,9 @@ function get_body(nid){
         success: function(data) {
             $(data).appendTo('#details .drop-in');
         }
+    }).done(function() {
+        var window_width = $(window).width();
+        $('.drop-in').find('img').removeAttr('style').css({'width':(window_width/2) + 'px'});
+        $('.drop-in').css({'width':(window_width/2) + 'px'});
     });
 }

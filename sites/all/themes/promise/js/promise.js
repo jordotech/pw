@@ -56,7 +56,10 @@ function get_body(nid){
     $.ajax({
         url: base_url + '/grid-body/' + nid,
         success: function(data) {
+
+            console.log($(data).find('img'));
             $(data).appendTo('#details .drop-in');
+            $('.drop-in').find('img').removeAttr('style').css({'width':'300px'});
         }
     });
 }

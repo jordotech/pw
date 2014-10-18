@@ -53,7 +53,7 @@ function itemDetail(nid) {
 }
 
 function get_body(nid){
-    var base_url = window.location.host;
+    var base_url = 'http://' + window.location.host;
     $.ajax({
         url: base_url + '/grid-body/' + nid,
         success: function(data) {

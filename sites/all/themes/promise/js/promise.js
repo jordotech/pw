@@ -1,6 +1,9 @@
 var $ = jQuery.noConflict();
 
 $(document).ready(function () {
+    if($(window).width < 500){
+        $('.grid-item').slice(300).remove();
+    }
     $('.close-button').click(function () {
         $(this).hide();
         $('.grid-item').removeClass('dark');

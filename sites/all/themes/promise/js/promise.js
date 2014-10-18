@@ -42,19 +42,21 @@ $(document).ready(function () {
 });
 
 function itemDetail(nid) {
-    if($(window).width < 500){
+    if($(window).width() < 500){
         window.location = '/grid-body/' + nid;
+    }else{
+        var item = $('.grid-item[nid="' + nid + '"]');
+        if(!$(item).hasClass('dark')){
+            $('.close-button').show();
+            $(item).siblings('.grid-item').addClass('dark');
+            var body = $(item).find('.grid-item-body').clone();
+            get_body(nid);
+            $(item).find('.grid-item-img').hide();
+            $('#controls').hide();
+        }
     }
-    return false;
-    var item = $('.grid-item[nid="' + nid + '"]');
-    if(!$(item).hasClass('dark')){
-        $('.close-button').show();
-        $(item).siblings('.grid-item').addClass('dark');
-        var body = $(item).find('.grid-item-body').clone();
-        get_body(nid);
-        $(item).find('.grid-item-img').hide();
-        $('#controls').hide();
-    }
+
+
 }
 
 function get_body(nid){

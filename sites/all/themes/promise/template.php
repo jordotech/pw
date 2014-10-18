@@ -11,7 +11,6 @@
  * for more information on this topic.
  */
 function promise_preprocess_page(&$vars) {
-
     drupal_add_js(drupal_get_path('theme', 'promise') . '/js/promise.js');
 }
 

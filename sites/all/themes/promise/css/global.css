@@ -7,6 +7,9 @@ body.light{
     background:#fff;
     color:#000;
 }
+.node-promoted{
+    display:none;
+}
 .grid-item{
 
     height: 200px;
@@ -91,4 +94,11 @@ body.light #controls{
 }
 #controls .light-dark span{
     cursor:pointer;
+}
+.missing-img-icon{
+    height:200px;
+}
+.missing-img-icon i{
+    padding-left: 75px;
+    padding-top: 75px;
 }

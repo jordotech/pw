@@ -14,30 +14,43 @@ function pw_menu(){
 }
 
 function pw_grid(){
-    $output = '';
-    $controls = '<div id="controls">';
-    $output .= '';
-    $output .= '<div id="details"><div class="close-button"><i class="fa fa-mail-forward fa-4x"></i></div><div class="drop-in"></div></div>';
-    $items = pw_grid_items(50);
-    //debug($items);
-    foreach($items as $key=>$value){
-        $item_cat_div = '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
-        $body = $value['body'];
-        $grid = '<div onclick="itemDetail(' . $value['nid'] . ')" nid = "' . $value['nid'] . '" class="grid-item" tid="' . $value['tid'] . '">';
+    $cached_block = cache_get('grid');
+    if ($cached_block) {
+        return $cached_block->data;
+    } else {
+        $output = '';
+        $controls = '<div id="controls">';
+        $output .= '';
+        $output .= '<div id="details"><div class="close-button"><i class="fa fa-mail-forward fa-4x"></i></div><div class="drop-in"></div></div>';
+        $items = pw_grid_items(700);
+        foreach($items as $key=>$value){
+            $item_cat_div = '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
+            $body = $value['body'];
+            $grid = '<div onclick="itemDetail(' . $value['nid'] . ')" nid = "' . $value['nid'] . '" class="grid-item" tid="' . $value['tid'] . '">';
 
-        $grid .= '<div class="grid-item-img">' . theme('image_style', array('style_name' => 'test', 'path' => $value['img_path'], 'alt' => 'image alt', 'title' => 'title',)) . '<div class="grid-img-overlay">' . $value['title'] . '<br/>' . $item_cat_div . '</div></div>';
-        $grid .= '<div class="grid-item-body">';
-        $grid .= $item_cat_div;
-        $grid .= $value['body'] . '</div>';
-        $grid .= '</div>';
-        $output .= $grid;
+            $grid .= '<div class="grid-item-img">';
+            if($value['img_path'] != ''){
+                $grid .= theme('image_style', array('style_name' => 'test', 'path' => $value['img_path'], 'alt' => 'image alt', 'title' => 'title',));
+
+            }else{
+                $grid .= '<div class="missing-img-icon"><i class="fa '.$value['icon'].' fa-5x"></i></div>';
+            }
+            $grid .= '<div class="grid-img-overlay">' . $value['title'] . '<br/>' . $item_cat_div . '</div></div>';
+            $grid .= '<div class="grid-item-body">';
+            $grid .= $item_cat_div;
+            $grid .= $value['body'] . '</div>';
+            $grid .= '</div>';
+            $output .= $grid;
+        }
+        $controls .= grid_cat_list();
+        $controls .= '<div class="light-dark"><span class="light-button active">LIGHT</span> | <span class="dark-button">DARK</span></div>';
+
+        $controls .= '</div>';
+        $output .= $controls;
+        cache_set('grid', $output, 'cache', 3600);
+        return $output;
     }
-    $controls .= grid_cat_list();
-    $controls .= '<div class="light-dark"><span class="light-button">LIGHT</span> | <span class="dark-button active">DARK</span></div>';
 
-    $controls .= '</div>';
-    $output .= $controls;
-    return $output;
 }
 
 function grid_cat_list(){
@@ -59,7 +72,9 @@ function grid_cat_list(){
 }
 
 function extract_img_path($body){
-
+    if(!strstr($body, 'default/files/images')){
+        return '';
+    }
     $src_pos = strpos($body, 'src');
     $a = substr($body, $src_pos);
     $b = strpos($a, '"')+2;
@@ -95,7 +110,6 @@ function pw_grid_items($limit, $tids = array()) {
     $result = $query->execute();
     foreach ($result as $key => $value) {
         $img_path = extract_img_path($value->body_value);
-        if($img_path != ''){
             $nids[] = array(
                 'nid' => $value->nid,
                 'title' => $value->title,
@@ -105,7 +119,7 @@ function pw_grid_items($limit, $tids = array()) {
                 'img_path' => $img_path,
                 'icon' => $value->field_category_icon_value,
             );
-        }
+
     }
     return $nids;
 }

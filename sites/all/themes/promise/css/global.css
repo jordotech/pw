@@ -73,6 +73,7 @@ body.light{
 @media screen and (max-width: 500px) {
     #controls{
         font-size:10px;
+        width:100px;
     }
 }
 #controls{

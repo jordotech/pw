@@ -10,23 +10,8 @@
  * for your subtheme grows. Please read the README.txt in the /preprocess and /process subfolders
  * for more information on this topic.
  */
-function collateralbmx_preprocess_page(&$vars) {
-    if (!drupal_is_front_page()) {
-        unset($vars['page']['header']['branding']['branding'], $vars['page']['header']['branding']['user_first']);
-    }
+function promise_preprocess_page(&$vars) {
+
+    drupal_add_js(drupal_get_path('theme', 'promise') . '/js/promise.js');
 }
 
-function collateralbmx_preprocess_node(&$vars) {
-    if ($vars['type'] == 'blog') {
-        $nid = $vars['nid'];
-        $node = node_load($nid, $vars['vid']);
-        if (isset($node->field_gallery1[$node->language][0])) {
-            $links = '<div class="gallery">';
-            foreach ($node->field_gallery1[$node->language] as $key => $value) {
-                $links .= l('', file_create_url($value['uri']), array('attributes' => array('class' => 'gallery1')));
-            }
-            $links .= '</div>';
-            $vars['gallery'] = $links;
-        }
-    }
-}

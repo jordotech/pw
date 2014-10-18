@@ -1,4 +1,4 @@
-name = 'collateralbmx'
+name = 'promise'
 description = ''
 core = '7.x'
 engine = 'phptemplate'
@@ -33,6 +33,7 @@ zones[menu] = 'Menu'
 zones[preface] = 'Preface'
 zones[postscript] = 'Postscript'
 css[global.css][name] = 'Your custom global styles'
+css[font-awesome.css]
 css[global.css][description] = 'This file holds all the globally active custom CSS of your theme.'
 css[global.css][options][weight] = '10'
 settings[alpha_grid] = 'alpha_default'

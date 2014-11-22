@@ -5,7 +5,7 @@ $(document).ready(function () {
         var windowWidth = $(window).width();
 
         $('#details').css({'width': windowWidth+'px'});
-        $('#details img').css({'width': windowWidth/2 +'px'});
+        $('#details img').css({'width': windowWidth/4 +'px'});
 
     });
     $('.close-button').click(function () {
@@ -59,6 +59,7 @@ function itemDetail(nid) {
             get_body(nid);
             $(item).find('.grid-item-img').hide();
             $('#controls').hide();
+
         }
     }
 
@@ -74,7 +75,7 @@ function get_body(nid){
         }
     }).done(function() {
         var window_width = $(window).width();
-        $('.drop-in').find('img').removeAttr('style').css({'width':(window_width/2) + 'px'});
         $('.drop-in, .drop-in p').css({'width':window_width/2 + 'px'});
+        $('#details img').css({'width': windowWidth/4 +'px'});
     });
 }

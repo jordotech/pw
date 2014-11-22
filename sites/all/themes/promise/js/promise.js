@@ -1,7 +1,13 @@
 var $ = jQuery.noConflict();
 
 $(document).ready(function () {
+    $(window).resize(function(){
+        var windowWidth = $(window).width();
 
+        $('#details').css({'width': windowWidth+'px'});
+        $('#details img').css({'width': windowWidth/2 +'px'});
+
+    });
     $('.close-button').click(function () {
         $(this).hide();
         $('.grid-item').removeClass('dark');

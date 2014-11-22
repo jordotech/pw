@@ -5,7 +5,7 @@ $(document).ready(function () {
         var windowWidth = $(window).width();
 
         $('#details').css({'width': windowWidth+'px'});
-        $('#details img').css({'width': windowWidth/4 +'px'});
+        //$('#details img').css({'width': windowWidth/4 +'px'});
 
     });
     $('.close-button').click(function () {

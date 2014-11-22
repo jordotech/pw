@@ -69,6 +69,6 @@ function get_body(nid){
     }).done(function() {
         var window_width = $(window).width();
         $('.drop-in').find('img').removeAttr('style').css({'width':(window_width/2) + 'px'});
-        $('.drop-in').css({'width':window_width-40 + 'px'});
+        $('.drop-in, .drop-in p').css({'width':window_width/2 + 'px'});
     });
 }

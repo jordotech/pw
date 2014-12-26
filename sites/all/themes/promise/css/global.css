@@ -7,8 +7,11 @@ body.light{
     background:#fff;
     color:#000;
 }
+.node-blog .node-promoted{
+    display:block;
+}
 .node-promoted{
-    display:none;
+    xdisplay:none;
 }
 .grid-item{
 

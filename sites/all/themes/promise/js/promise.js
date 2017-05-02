@@ -68,13 +68,16 @@ function itemDetail(nid) {
 
 function get_body(nid){
     var base_url = 'http://' + window.location.host;
+    $('.drop-in').html('<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>');
     $.ajax({
         url: base_url + '/grid-body/' + nid,
         success: function(data) {
+            $('#details  .drop-in').empty();
             $(data).appendTo('#details .drop-in');
         }
     }).done(function() {
         var window_width = $(window).width();
+
         $('.drop-in, .drop-in p').css({'width':window_width/2 + 'px'});
         $('#details img').css({'width': windowWidth/4 +'px'});
     });

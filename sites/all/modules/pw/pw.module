@@ -1,137 +1,153 @@
 <?php
 
-function pw_init(){
+function pw_init() {
 
 }
 
-function pw_menu(){
-    $items['grid'] = array(
-        'description' => 'The Grid',
-        'page callback' => 'pw_grid',
-        'access callback' => TRUE,
-    );
-    $items['grid-body/%'] = array(
-        'page callback' => 'blog_body',
-        'access callback' => TRUE,
-        'page arguments' => array(1),
-    );
-    return $items;
-}
-function blog_body($nid){
-    $body = db_query("SELECT body_value from field_data_body where entity_id = $nid")->fetchField();
-    print $body;
-    return null;
+function pw_menu() {
+  $items['grid'] = array(
+    'description' => 'The Grid',
+    'page callback' => 'pw_grid',
+    'access callback' => TRUE,
+  );
+  $items['grid-body/%'] = array(
+    'page callback' => 'blog_body',
+    'access callback' => TRUE,
+    'page arguments' => array(1),
+  );
+  return $items;
 }
 
-function pw_grid(){
-    $cached_block = cache_get('grid');
-    if ($cached_block) {
-        return $cached_block->data;
-    } else {
-        $output = '';
-        $controls = '<div id="controls">';
-        $controls .= '<h1>P&W</h1>';
-        $output .= '';
-        $output .= '<div id="details"><div class="close-button"><i class="fa fa-mail-forward fa-4x"></i></div><div class="drop-in"></div></div>';
-        $items = pw_grid_items(700);
-        foreach($items as $key=>$value){
-            $item_cat_div = '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
-            $body = '';
-            $grid = '<div onclick="itemDetail(' . $value['nid'] . ')" nid = "' . $value['nid'] . '" class="grid-item" tid="' . $value['tid'] . '">';
+function blog_body($nid) {
+  $body = db_query("SELECT body_value from field_data_body where entity_id = $nid")->fetchField();
+  global $user;
+  $ret = '';
+  if($user->uid == 1){
+    $ret .= '<div><a title="edit post" href="/node/' . $nid . '/edit/"><i class="fa fa-pencil fa-3x"></i></a></div>';
+  }
+  $ret .= $body;
+  print $ret;
+  return NULL;
+}
 
-            $grid .= '<div class="grid-item-img">';
-            if($value['img_path'] != ''){
-                $grid .= theme('image_style', array('style_name' => 'test', 'path' => $value['img_path'], 'alt' => 'image alt', 'title' => 'title',));
+function pw_grid() {
+  $cached_block = cache_get('grid');
+  if ($cached_block) {
+    return $cached_block->data;
+  }
+  else {
+    $output = '';
+    $controls = '<div id="controls">';
+    $controls .= '<h1>P&W</h1>';
+    $output .= '';
+    $output .= '<div id="details"><div class="close-button"><i class="fa fa-close fa-4x"></i></div><div class="drop-in"></div></div>';
+    $items = pw_grid_items(3000);
+    foreach ($items as $key => $value) {
+      $item_cat_div = '<div class="body-category"><i class="fa ' . $value['icon'] . '"></i>  ' . $value['category'] . '</div>';
+      $body = '';
+      $grid = '<div onclick="itemDetail(' . $value['nid'] . ')" nid = "' . $value['nid'] . '" class="grid-item" tid="' . $value['tid'] . '">';
 
-            }else{
-                $grid .= '<div class="missing-img-icon"><i class="fa '.$value['icon'].' fa-5x"></i></div>';
-            }
-            $grid .= '<div class="grid-img-overlay">' . $value['title'] . '<br/>' . $item_cat_div . '</div></div>';
-            $grid .= '<div class="grid-item-body">';
-            $grid .= $item_cat_div;
-            $grid .= '' . '</div>';
-            $grid .= '</div>';
-            $output .= $grid;
-        }
-        $controls .= grid_cat_list();
-        $controls .= '<div class="light-dark"><span class="light-button active">LIGHT</span> | <span class="dark-button">DARK</span></div>';
+      $grid .= '<div class="grid-item-img">';
+      if ($value['img_path'] != '') {
+        $grid .= theme('image_style', array(
+          'style_name' => 'test',
+          'path' => $value['img_path'],
+          'alt' => 'image alt',
+          'title' => 'title',
+        ));
 
-        $controls .= '</div>';
-        $output .= $controls;
-        cache_set('grid', $output, 'cache', 3600);
-        return $output;
+      }
+      else {
+        $grid .= '<div class="missing-img-icon"><i class="fa ' . $value['icon'] . ' fa-5x"></i></div>';
+      }
+      $grid .= '<div class="grid-img-overlay">' . $value['title'] . '<br/>' . $item_cat_div . '</div></div>';
+      $grid .= '<div class="grid-item-body">';
+      $grid .= $item_cat_div;
+      $grid .= '' . '</div>';
+      $grid .= '</div>';
+      $output .= $grid;
     }
+    $controls .= grid_cat_list();
+    $controls .= '<div class="light-dark"><span class="light-button active">LIGHT</span> | <span class="dark-button">DARK</span></div>';
+
+    $controls .= '</div>';
+    $output .= $controls;
+    //cache_set('grid', $output, 'cache', 3600);
+    return $output;
+  }
 }
 
 
-function grid_cat_list(){
+function grid_cat_list() {
 
-    $cat_list = '<ul>';
-    $query = db_select('field_data_field_category', 'fdfc')->distinct();
-    $query->leftJoin('taxonomy_term_data', 'ttd', 'ttd.tid =fdfc.field_category_tid');
-    $query->leftJoin('field_data_field_category_icon', 'fdfci', 'fdfci.entity_id = ttd.tid');
-    $query->fields('ttd', array('name'))
-          ->fields('fdfci', array('field_category_icon_value'))
-          ->fields('fdfc', array('field_category_tid'));
-    $result = $query->execute();
-    $cat_list .= '<li tid="all">ALL</li>';
-    foreach ($result as $key => $value) {
-        $cat_list .= '<li tid="' . $value->field_category_tid . '"><i class="fa ' . $value->field_category_icon_value . '"></i> ' . $value->name . '</li>';
-      // debug($value->field_category_tid);
-    }
-    $cat_list .= '</ul>';
-    return $cat_list;
+  $cat_list = '<ul>';
+  $query = db_select('field_data_field_category', 'fdfc')->distinct();
+  $query->leftJoin('taxonomy_term_data', 'ttd', 'ttd.tid =fdfc.field_category_tid');
+  $query->leftJoin('field_data_field_category_icon', 'fdfci', 'fdfci.entity_id = ttd.tid');
+  $query->fields('ttd', array('name'))
+    ->fields('fdfci', array('field_category_icon_value'))
+    ->fields('fdfc', array('field_category_tid'));
+  $result = $query->execute();
+  $cat_list .= '<li tid="all">ALL</li>';
+  foreach ($result as $key => $value) {
+    $cat_list .= '<li tid="' . $value->field_category_tid . '"><i class="fa ' . $value->field_category_icon_value . '"></i> ' . $value->name . '</li>';
+    // debug($value->field_category_tid);
+  }
+  $cat_list .= '</ul>';
+  return $cat_list;
 }
 
-function extract_img_path($body){
-    if(!strstr($body, 'default/files/images')){
-        return '';
-    }
-    $src_pos = strpos($body, 'src');
-    $a = substr($body, $src_pos);
-    $b = strpos($a, '"')+2;
+function extract_img_path($body) {
+  if (!strstr($body, 'default/files/images')) {
+    return '';
+  }
+  $src_pos = strpos($body, 'src');
+  $a = substr($body, $src_pos);
+  $b = strpos($a, '"') + 2;
 
-    $c = substr($body, ($src_pos + $b));
-    $z = strpos($c, 'images');
-    $c = substr($c, $z);
-    $d = strpos($c, '"');
-    $img_path = substr($c, 0, $d);
+  $c = substr($body, ($src_pos + $b));
+  $z = strpos($c, 'images');
+  $c = substr($c, $z);
+  $d = strpos($c, '"');
+  $img_path = substr($c, 0, $d);
 
-    if(strstr($img_path, 'images')){
-        return $img_path;
-    }else{
-        return '';
-    }
+  if (strstr($img_path, 'images')) {
+    return $img_path;
+  }
+  else {
+    return '';
+  }
 }
+
 function pw_grid_items($limit, $tids = array()) {
-    $nids = array();
-    $query = db_select('node', 'n');
-    $query->leftJoin('field_data_body', 'fdb', 'n.nid = fdb.entity_id');
+  $nids = array();
+  $query = db_select('node', 'n');
+  $query->leftJoin('field_data_body', 'fdb', 'n.nid = fdb.entity_id');
 
-    $query->leftJoin('field_data_field_category', 'fdfc', 'n.nid = fdfc.entity_id');
-    $query->leftJoin('taxonomy_term_data', 'ttd', 'fdfc.field_category_tid = ttd.tid');
-    $query->leftJoin('field_data_field_category_icon', 'fdfci', 'fdfci.entity_id = ttd.tid');
-    $query->condition('n.type', 'blog')
-        ->orderBy('created', 'DESC')
-        ->fields('n', array('nid', 'title', 'created'))
-        ->fields('fdfc', array('field_category_tid'))
-        ->fields('fdb', array('body_value'))
-        ->fields('fdfci', array('field_category_icon_value'))
-        ->fields('ttd', array('name'))
-        ->range(0, $limit);
-    $result = $query->execute();
-    foreach ($result as $key => $value) {
-        $img_path = extract_img_path($value->body_value);
-            $nids[] = array(
-                'nid' => $value->nid,
-                'title' => $value->title,
-                //'body' => $value->body_value,
-                'tid' => $value->field_category_tid,
-                'category' => $value->name,
-                'img_path' => $img_path,
-                'icon' => $value->field_category_icon_value,
-            );
+  $query->leftJoin('field_data_field_category', 'fdfc', 'n.nid = fdfc.entity_id');
+  $query->leftJoin('taxonomy_term_data', 'ttd', 'fdfc.field_category_tid = ttd.tid');
+  $query->leftJoin('field_data_field_category_icon', 'fdfci', 'fdfci.entity_id = ttd.tid');
+  $query->condition('n.type', 'blog')
+    ->orderBy('created', 'DESC')
+    ->fields('n', array('nid', 'title', 'created'))
+    ->fields('fdfc', array('field_category_tid'))
+    ->fields('fdb', array('body_value'))
+    ->fields('fdfci', array('field_category_icon_value'))
+    ->fields('ttd', array('name'))
+    ->range(0, $limit);
+  $result = $query->execute();
+  foreach ($result as $key => $value) {
+    $img_path = extract_img_path($value->body_value);
+    $nids[] = array(
+      'nid' => $value->nid,
+      'title' => $value->title,
+      //'body' => $value->body_value,
+      'tid' => $value->field_category_tid,
+      'category' => $value->name,
+      'img_path' => $img_path,
+      'icon' => $value->field_category_icon_value,
+    );
 
-    }
-    return $nids;
+  }
+  return $nids;
 }

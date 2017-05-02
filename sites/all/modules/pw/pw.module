@@ -72,7 +72,7 @@ function pw_grid() {
 
     $controls .= '</div>';
     $output .= $controls;
-    //cache_set('grid', $output, 'cache', 3600);
+    cache_set('grid', $output, 'cache', 3600);
     return $output;
   }
 }

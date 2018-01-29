@@ -48,6 +48,11 @@ $(document).ready(function () {
 });
 
 function itemDetail(nid) {
+    var url = '/grid-body/' + nid;
+    window.open(url, 'mywin',
+        'left=500,top=20,width=950,height=800');
+    return false;
+    /*
     if($(window).width() < 500){
         window.location = '/grid-body/' + nid;
     }else{
@@ -62,6 +67,8 @@ function itemDetail(nid) {
 
         }
     }
+     */
+
 
 
 }

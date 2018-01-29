@@ -22,9 +22,10 @@ function blog_body($nid) {
   $body = db_query("SELECT body_value from field_data_body where entity_id = $nid")->fetchField();
   global $user;
   $ret = '';
-  if($user->uid == 1){
-    $ret .= '<div><a title="edit post" href="/node/' . $nid . '/edit/"><i class="fa fa-pencil fa-3x"></i></a></div>';
-  }
+    if($user->uid != 0){
+        $ret .= '<div><a title="edit post" href="/node/' . $nid . '/edit/"><i class="fa fa-pencil fa-3x"></i> Edit</a></div>';
+
+    }
   $ret .= $body;
   print $ret;
   return NULL;
